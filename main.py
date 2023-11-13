@@ -61,22 +61,15 @@ async def obtener_contacto(email: str):
 
 
 @app.put("/contactos/{email}")
-async def actualizar_contacto(email: str, nuevo_contacto: Contacto):
-    # Verifica si el nuevo email ya existe en la base de datos
+async def actualizar_contacto(email: str, contacto: Contacto):
+    """Actualiza un contacto."""
+    # DONE Actualiza el contacto en la base de datos
     c = conn.cursor()
-    c.execute('SELECT * FROM contactos WHERE email = ?', (nuevo_contacto.email,))
-    existing_contact = c.fetchone()
-
-    if existing_contact:
-        return {"error": "El nuevo correo electrónico ya está en uso.", "status_code": 400}
-
-    # Actualiza el contacto
-    c.execute('UPDATE contactos SET email = ?, nombre = ?, telefono = ? WHERE email = ?',
-              (nuevo_contacto.email, nuevo_contacto.nombre, nuevo_contacto.telefono, email))
+    c.execute('UPDATE contactos SET nombre = ?, telefono = ? WHERE email = ?',
+              (contacto.nombre, contacto.telefono, email))
     conn.commit()
+    return contacto
     
-    return nuevo_contacto
-
 @app.delete("/contactos/{email}")
 async def eliminar_contacto(email: str):
     """Elimina un contacto."""
